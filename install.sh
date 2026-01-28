@@ -2,6 +2,7 @@
 
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 RS='\033[0m'
 
 SOURCE_URL="https://raw.githubusercontent.com/xiechunyao/AlgoFlow/main/AlgoFlow.sh"
@@ -12,7 +13,7 @@ echo -e "${BLUE}[Downloading]${RS} AlgoFlow..."
 curl -sSL "$SOURCE_URL" -o /tmp/algoflow
 
 if [[ $? -ne 0 ]]; then
-    echo "Download failed! Please check your internet connection."
+    echo -e "${RED}[ERROR]${RS}Download failed! Please check your internet connection."
     exit 1
 fi
 
