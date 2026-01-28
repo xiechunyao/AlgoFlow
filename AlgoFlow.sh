@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # --config--
 AUTHOR="chunyao"
@@ -18,26 +18,25 @@ log_success() { echo -e "${GREEN}[SUCCESS]${RS} $1"; }
 log_error() { echo -e "${RED}[ERROR]${RS} $1"; }
 
 show_help() {
-  echo "Usage: ./AlgoFlow.sh <ProblemID>"
-  echo "Example: ./AlgoFlow.sh P1001"
+  local cmd_name=$(basename "$0")
+  echo "Usage:"
+  echo "$cmd_name new <ProblemID>"
+  echo "$cmd_name rm <ProblemID>"
+  echo "Example:"
+  echo "$cmd_name new P1001"
+  echo "$cmd_name rm P1001"
 }
 
-# --main--
-if [[ $# -eq 0 ]]; then
-  log_error "Missing Problem ID."
-  show_help
-  exit 1
-fi
+do_create() {
+  local PROB_ID=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+  local DIR_NAME="$PROB_ID"
 
-PROB_ID=$(echo $1 | tr '[:lower:]' '[:upper:]')
-DIR_NAME="$PROB_ID"
+  if [[ -d "$DIR_NAME" ]]; then
+    log_error "Directory '$DIR_NAME' already exsits."
+    return 1
+  fi
 
-if [[ -d "$DIR_NAME" ]]; then
-  log_error "Directory '$DIR_NAME' already exsits."
-  exit 1
-fi
-
-mkdir "$DIR_NAME"
+  mkdir "$DIR_NAME"
 cat <<EOF > "$DIR_NAME/$PROB_ID.cpp"
 /**
  * Problem: $PROB_ID
@@ -67,5 +66,43 @@ cat <<EOF > "$DIR_NAME/$PROB_ID.md"
 -
 EOF
 
-log_success "Workspace successfully created."
-log_info "Path: $(pwd)/$DIR_NAME"
+  log_success "Workspace successfully created."
+  log_info "Path: $(pwd)/$DIR_NAME"
+
+}
+
+do_delate() {
+  local PROB_ID=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+  local DIR_NAME="$PROB_ID"
+  if [[ ! -d "$DIR_NAME" ]]; then
+    log_error "Directory '$DIR_NAME' dose'nt exsit."
+    return 1
+  fi
+  rm -rf "$DIR_NAME"
+  log_success "Successfully delate '$PROB_ID'"
+}
+
+# --main--
+if [[ $# -eq 0 ]]; then
+  log_error "Missing Problem ID."
+  show_help
+  exit 1
+fi
+
+COMMAND=$1
+shift
+
+case "$COMMAND" in
+  new|create)
+    do_create "$1"
+    ;;
+  rm|delete)
+    do_delate "$1"
+    ;;
+  *)
+    log_error "Unknown command: $COMMAND"
+    show_help
+    exit 1
+    ;;
+esac
+
