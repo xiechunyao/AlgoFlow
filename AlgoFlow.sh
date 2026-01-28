@@ -19,10 +19,10 @@ log_error() { echo -e "${RED}[ERROR]${RS} $1"; }
 
 show_help() {
   local cmd_name=$(basename "$0")
-  echo "Usage:"
+  echo -e "${BLUE}Usage:${RS}"
   echo "$cmd_name new <ProblemID>"
   echo "$cmd_name rm <ProblemID>"
-  echo "Example:"
+  echo -e "${BLUE}Example:${RS}"
   echo "$cmd_name new P1001"
   echo "$cmd_name rm P1001"
 }
