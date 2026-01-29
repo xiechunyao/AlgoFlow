@@ -66,9 +66,7 @@ cat <<EOF > "$DIR_NAME/$PROB_ID.md"
 -
 EOF
 
-  log_success "Workspace successfully created."
-  log_info "Path: $(pwd)/$DIR_NAME"
-
+  log_success "Successfully create '$PROB_ID'"
 }
 
 do_delate() {
@@ -82,9 +80,35 @@ do_delate() {
   log_success "Successfully delate '$PROB_ID'"
 }
 
+do_create_all() {
+  if [[ $# -eq 0 ]]; then
+    log_error "no problem ID."
+    echo "please enter at least one problem ID"
+    exit 1
+  fi
+
+  for PROBLEM in "$@"; do
+    do_create "$PROBLEM"
+  done
+
+  log_success "Workspace successfully created."
+}
+
+do_delate_all() {
+  if [[ $# -eq 0 ]]; then
+    log_error "no problem ID."
+    echo "please enter at least one problem ID"
+    exit 1
+  fi
+
+  for PROBLEM in "$@"; do
+    do_delate "$PROBLEM"
+  done
+
+  log_success "Workspace successfully created."
+}
 # --main--
 if [[ $# -eq 0 ]]; then
-  log_error "Missing Problem ID."
   show_help
   exit 1
 fi
@@ -94,10 +118,10 @@ shift
 
 case "$COMMAND" in
   new|create)
-    do_create "$1"
+    do_create_all "$@"
     ;;
   rm|delete)
-    do_delate "$1"
+    do_delate_all "$@"
     ;;
   *)
     log_error "Unknown command: $COMMAND"
