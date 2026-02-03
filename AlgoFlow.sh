@@ -9,6 +9,7 @@ set -eu
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 # reset color
 RS='\033[0m'
 
@@ -104,9 +105,28 @@ do_delate_all() {
   for PROBLEM in "$@"; do
     do_delate "$PROBLEM"
   done
-
-  log_success "Workspace successfully created."
 }
+
+do_clean() {
+  FILES=$(find . -type f \( ! -name "*.cpp" ! -name ".md" \))
+
+  if [[ -z "$FILES" ]]; then
+    echo "Nothing to clean here"
+    exit 0
+  fi
+
+  echo "$FILES"
+  echo -e "${YELLOW}[WARNING]${RS} "
+  read -p "Are you sure you want to clean the files above? (y/n) " CONFIRM
+
+  if [[ "$CONFIRM" == [yY] ]]; then
+    echo "$FILES" | xargs rm -f
+    echo -e "${GREEN}[Done]${RS}"
+  else
+    echo -e "${GREEN}[Aborted]${RS}"
+  fi
+}
+
 # --main--
 if [[ $# -eq 0 ]]; then
   show_help
@@ -122,6 +142,9 @@ case "$COMMAND" in
     ;;
   rm|delete)
     do_delate_all "$@"
+    ;;
+  clean)
+    do_clean
     ;;
   *)
     log_error "Unknown command: $COMMAND"
