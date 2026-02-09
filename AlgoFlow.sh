@@ -5,6 +5,11 @@ AUTHOR="chunyao"
 LANGUAGE="cpp"
 set -eu
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATE_DIR="$SCRIPT_DIR/templates"
+TEMPLATE_CPP="$TEMPLATE_DIR/template.cpp"
+TEMPLATE_MD="$TEMPLATE_DIR/template.md"
+
 # --color constants--
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -17,6 +22,7 @@ RS='\033[0m'
 log_info() { echo -e "${BLUE}[INFO]${RS} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${RS} $1"; }
 log_error() { echo -e "${RED}[ERROR]${RS} $1"; }
+log_warn() { echo -e "${YELLOW}[WARN]${RS} $1"; }
 
 show_help() {
   local cmd_name=$(basename "$0")
@@ -33,11 +39,11 @@ do_create() {
   local DIR_NAME="$PROB_ID"
 
   if [[ -d "$DIR_NAME" ]]; then
-    log_error "Directory '$DIR_NAME' already exsits."
+    log_error "Directory '$DIR_NAME' already exists."
     return 1
   fi
 
-  mkdir "$DIR_NAME"
+  mkdir -p "$DIR_NAME"
 cat <<EOF > "$DIR_NAME/$PROB_ID.cpp"
 /**
  * Problem: $PROB_ID
