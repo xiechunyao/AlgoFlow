@@ -44,7 +44,12 @@ do_create() {
   fi
 
   mkdir -p "$DIR_NAME"
-cat <<EOF > "$DIR_NAME/$PROB_ID.cpp"
+
+  if [[ -f "$TEMPLATE_CPP" ]]; then
+    sed -e "s/{{PROB_ID}}/$PROB_ID/g" -e "s/{{AUTHOR}}/$AUTHOR/g" "$TEMPLATE_CPP" > "$DIR_NAME/$PROB_ID.cpp"
+    log_info "Used external CPP template."
+  else
+  cat <<EOF > "$DIR_NAME/$PROB_ID.cpp"
 /**
  * Problem: $PROB_ID
  * Link: https://www.luogu.com.cn/problem/$PROB_ID
@@ -59,8 +64,13 @@ int main()
     return 0;
 }
 EOF
+  fi
 
-cat <<EOF > "$DIR_NAME/$PROB_ID.md"
+  if [[ -f "$TEMPLATE_MD" ]]; then
+    sed "s/{{PROB_ID}}/$PROB_ID/g" "$TEMPLATE_MD" > "$DIR_NAME/$PROB_ID.md"
+    log_info "Used external MD template."
+  else
+  cat <<EOF > "$DIR_NAME/$PROB_ID.md"
 # $PROB_ID Notes
 ## Algorithm & Logic
 - 
@@ -72,6 +82,7 @@ cat <<EOF > "$DIR_NAME/$PROB_ID.md"
 ## Reflection
 -
 EOF
+  fi
 
   log_success "Successfully create '$PROB_ID'"
 }
@@ -80,7 +91,7 @@ do_delate() {
   local PROB_ID=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   local DIR_NAME="$PROB_ID"
   if [[ ! -d "$DIR_NAME" ]]; then
-    log_error "Directory '$DIR_NAME' dose'nt exsit."
+    log_error "Directory '$DIR_NAME' dose'nt exist."
     return 1
   fi
   rm -rf "$DIR_NAME"
@@ -114,11 +125,11 @@ do_delate_all() {
 }
 
 do_clean() {
-  FILES=$(find . -type f \( ! -name "*.cpp" ! -name ".md" \))
+  FILES=$(find . -type f ! -name "*.cpp" ! -name "*.md" ! -name "*.sh" ! -path "*/.*")
 
   if [[ -z "$FILES" ]]; then
     echo "Nothing to clean here"
-    exit 0
+    return 0
   fi
 
   echo "$FILES"
@@ -151,6 +162,10 @@ case "$COMMAND" in
     ;;
   clean)
     do_clean
+    ;;
+  update)
+    cd "$SCRIPT_DIR" && sudo git pull
+    log_success "AlgoFlow updated to the latest version!"
     ;;
   *)
     log_error "Unknown command: $COMMAND"

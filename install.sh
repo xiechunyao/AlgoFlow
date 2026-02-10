@@ -1,25 +1,43 @@
 #!/usr/bin/env bash
 
+# color
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 RS='\033[0m'
 
-SOURCE_URL="https://raw.githubusercontent.com/xiechunyao/AlgoFlow/main/AlgoFlow.sh"
-TARGET_PATH="/usr/local/bin/algoflow"
+# config
+REPO_URL="https://github.com/xiechunyao/AlgoFlow.git"
+INSTALL_DIR="/opt/algoflow"
+BIN_PATH="/usr/local/bin/algoflow"
 
-echo -e "${BLUE}[Downloading]${RS} AlgoFlow..."
+echo -e "${BLUE}[Installing]${RS} Preparing to install AlgoFlow..."
 
-curl -sSL "$SOURCE_URL" -o /tmp/algoflow
+# checking old version
+if [[ -d "$INSTALL_DIR" ]]; then
+    echo -e "${BLUE}[Info]${RS} Removing old version..."
+    sudo rm -rf "$INSTALL_DIR"
+fi
+
+# clone
+echo -e "${BLUE}[Downloading]${RS} Cloning repository from GitHub..."
+sudo git clone --depth 1 "$REPO_URL" "$INSTALL_DIR"
 
 if [[ $? -ne 0 ]]; then
-    echo -e "${RED}[ERROR]${RS}Download failed! Please check your internet connection."
+    echo -e "${RED}[ERROR]${RS} Clone failed! Please check git installation and network."
     exit 1
 fi
 
-echo -e "${BLUE}[Installing]${RS} Installing to $TARGET_PATH..."
-sudo mv /tmp/algoflow "$TARGET_PATH"
-sudo chmod +x "$TARGET_PATH"
+sudo chmod +x "$INSTALL_DIR/AlgoFlow.sh"
 
-echo -e "${GREEN}[Success]${RS} AlgoFlow installed to $TARGET_PATH successfully"
+# creating symlink and moving
+echo -e "${BLUE}[Linking]${RS} Creating symbolic link to $BIN_PATH..."
+sudo ln -sf "$INSTALL_DIR/AlgoFlow.sh" "$BIN_PATH"
+
+# output
+echo -e "-----------------------------------------------"
+echo -e "${GREEN}[Success]${RS} AlgoFlow installed successfully!"
+echo -e "${BLUE}Location:${RS} $INSTALL_DIR"
+echo -e "${BLUE}Command:${RS}  $BIN_PATH"
+echo -e "-----------------------------------------------"
 echo -e "Try typing '${BLUE}algoflow${RS}' to start!"
