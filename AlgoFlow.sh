@@ -6,7 +6,8 @@ LANGUAGE="cpp"
 set -eu
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMPLATE_DIR="$SCRIPT_DIR/templates"
+CONFIG_DIR="$HOME/.config/algoflow"
+TEMPLATE_DIR="$CONFIG_DIR/templates"
 TEMPLATE_CPP="$TEMPLATE_DIR/template.cpp"
 TEMPLATE_MD="$TEMPLATE_DIR/template.md"
 
@@ -174,3 +175,4 @@ case "$COMMAND" in
     ;;
 esac
 
+哪里有问题

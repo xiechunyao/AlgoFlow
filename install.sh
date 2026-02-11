@@ -10,6 +10,8 @@ RS='\033[0m'
 REPO_URL="https://github.com/xiechunyao/AlgoFlow.git"
 INSTALL_DIR="/opt/algoflow"
 BIN_PATH="/usr/local/bin/algoflow"
+CONFIG_DIR="$HOME/.config/algoflow"
+TEMPLATES_DIR="$HOME/.config/algoflow/templates"
 
 echo -e "${BLUE}[Installing]${RS} Preparing to install AlgoFlow..."
 
@@ -28,6 +30,13 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
+# checking config
+if [[ ! -d "$CONFIG_DIR" ]]; then
+    sudo mkdir "$CONFIG_DIR"
+    sudo mv "$INSTALL_DIR/templates" "$CONFIG_DIR"
+    echo -e "${BLUE}[Info]${RS} Creating config directory..."
+fi
+
 sudo chmod +x "$INSTALL_DIR/AlgoFlow.sh"
 
 # creating symlink and moving
@@ -38,6 +47,7 @@ sudo ln -sf "$INSTALL_DIR/AlgoFlow.sh" "$BIN_PATH"
 echo -e "-----------------------------------------------"
 echo -e "${GREEN}[Success]${RS} AlgoFlow installed successfully!"
 echo -e "${BLUE}Location:${RS} $INSTALL_DIR"
+echo -e "${BLUE}Config Location:${RS} $CONFIG_DIR"
 echo -e "${BLUE}Command:${RS}  $BIN_PATH"
 echo -e "-----------------------------------------------"
 echo -e "Try typing '${BLUE}algoflow${RS}' to start!"
