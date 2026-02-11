@@ -33,6 +33,7 @@ show_help() {
   echo -e "${BLUE}Example:${RS}"
   echo "$cmd_name new P1001"
   echo "$cmd_name rm P1001"
+  log_info "Configure in $CONFIG_DIR"
 }
 
 do_create() {
