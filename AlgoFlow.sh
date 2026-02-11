@@ -174,5 +174,3 @@ case "$COMMAND" in
     exit 1
     ;;
 esac
-
-哪里有问题
