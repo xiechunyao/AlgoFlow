@@ -169,6 +169,14 @@ case "$COMMAND" in
     cd "$SCRIPT_DIR" && sudo git pull
     log_success "AlgoFlow updated to the latest version!"
     ;;
+  cpp)
+    log_info "Opening templates for you..."
+    ${EDITOR:-vi} "$TEMPLATE_CPP"
+    ;;
+  md)
+    log_info "Opening templates for you..."
+    ${EDITOR:-vi} "$TEMPLATE_MD"
+    ;;
   *)
     log_error "Unknown command: $COMMAND"
     show_help
