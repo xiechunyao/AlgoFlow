@@ -36,6 +36,17 @@ show_help() {
   log_info "Configure in $CONFIG_DIR"
 }
 
+
+show_all_help() {
+  local cmd_name=$(basename "$0")
+  echo -e "${BLUE}Usage:${RS}"
+  echo "$cmd_name new <ProblemID>"
+  echo "$cmd_name rm <ProblemID>"
+  echo "$cmd_name clean"
+  echo "$cmd_name update"
+  echo "$cmd_name help"
+  log_info "Configure in $CONFIG_DIR"
+}
 do_create() {
   local PROB_ID=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   local DIR_NAME="$PROB_ID"
@@ -156,6 +167,9 @@ COMMAND=$1
 shift
 
 case "$COMMAND" in
+  help|h)
+    show_all_help
+    ;;
   new|create)
     do_create_all "$@"
     ;;
