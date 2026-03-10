@@ -5,7 +5,7 @@ AUTHOR="chunyao"
 LANGUAGE="cpp"
 set -eu
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="/opt/algoflow"
 CONFIG_DIR="$HOME/.config/algoflow"
 TEMPLATE_DIR="$CONFIG_DIR/templates"
 TEMPLATE_CPP="$TEMPLATE_DIR/template.cpp"
@@ -157,6 +157,23 @@ do_clean() {
   fi
 }
 
+do_update() {
+    log_info "Starting update process..."
+    if [[ -d "$SCRIPT_DIR/.git" ]]; then
+        log_info "Repository found at $SCRIPT_DIR. Pulling latest changes..."
+        if sudo git -C "$SCRIPT_DIR" pull; then
+            log_success "AlgoFlow updated to the latest version!"
+            sudo chmod +x "$SCRIPT_DIR/$(basename "$0")"
+        else
+            log_error "Update failed. Please check your network or git status."
+            exit 1
+        fi
+    else
+        log_error "Installation directory ($SCRIPT_DIR) is not a git repository."
+        log_warn "Manual update required: git clone the repo to $SCRIPT_DIR."
+    fi
+}
+
 # --main--
 if [[ $# -eq 0 ]]; then
   show_help
@@ -180,20 +197,7 @@ case "$COMMAND" in
     do_clean
     ;;
   update)
-    log_info "Starting update process..."
-    if [[ -d "$SCRIPT_DIR/.git" ]]; then
-        log_info "Repository found at $SCRIPT_DIR. Pulling latest changes..."
-        if sudo git -C "$SCRIPT_DIR" pull; then
-            log_success "AlgoFlow updated to the latest version!"
-            sudo chmod +x "$SCRIPT_DIR/$(basename "$0")"
-        else
-            log_error "Update failed. Please check your network or git status."
-            exit 1
-        fi
-    else
-        log_error "Installation directory ($SCRIPT_DIR) is not a git repository."
-        log_warn "Manual update required: git clone the repo to $SCRIPT_DIR."
-    fi
+    do_update
     ;;
   cpp)
     log_info "Opening templates for you..."
